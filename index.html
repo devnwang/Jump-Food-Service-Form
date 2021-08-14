@@ -19,7 +19,7 @@
             <h1>JUMP Food Service Form</h1>
         </header>
         
-        <main>
+        <main style="float: left;">
             <!-- list of items -->
             <div class="card md-3">
                 <div class="card-body row" id="item-form">
@@ -58,9 +58,48 @@
             </div>
         </main>
 
+        <aside style="float: right;">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Tips:</h5>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tip" value="0" id="tip-none" checked />
+                        <label class="form-check-label" for="tip-none">None</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tip" value="10" id="tip-10"  />
+                        <label class="form-check-label" for="tip-10">10%</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tip" value="15" id="tip-15" />
+                        <label class="form-check-label" for="tip-15">15%</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tip" value="20" id="tip-20" />
+                        <label class="form-check-label" for="tip-20">20%</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tip" value="custom" id="tip-custom" />
+                        <label class="form-check-label" for="tip-custom">Custom Tip</label>
+                    </div>
+                    <div class="input-group col md-3">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="itemPrice" placeholder="Custom Tip" disabled />
+                    </div>
+
+                    <hr style="margin: 20px;" />
+
+                    <h5>Subtotal: <span id="subtotal" style="float:right;">$0.00</span></h5>
+                    <h6>Estimated Tax: <span id="tax" style="float:right;">$0.00</span></h6>
+                    <h6>Tips Applied: <span id="tip-applied" style="float:right;">$0.00</span></h6>
+                    
+                </div>
+            </div>
+        </aside>
+
         <!-- cart total -->
         <footer class="footer">
-            <h1>Total: $0.00</h1>
+            <h1>Total: <span id="total">$0.00</span></h1>
         </footer>
     
     </div>
