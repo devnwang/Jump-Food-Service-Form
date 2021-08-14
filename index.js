@@ -6,11 +6,11 @@ let rowCount = 0;
 let itemList = [];
 
 const formatPrice = (price) => {
-    return (price).toLocaleString(undefined, { minimumFractionDigits : 2 });
+    return (price).toLocaleString(undefined, { style: "currency", currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 const updatePriceDisplay = (id, price) => {
-    document.getElementById(id).innerHTML = "$" + formatPrice(price);
+    document.getElementById(id).innerHTML = formatPrice(price);
 }
 
 const updateItemQty = (event) => {
@@ -49,22 +49,28 @@ const addNewItem = (item, price) => {
 
     // TODO: Don't add any duplicate items to the list
 
-    // format the price
-    let dspPrice = formatPrice(price);
-    
-    // markup for the new table row
-    let tblMarkup =
-        "<tr>" +
-            "<td>" + item + "</td>" +
-            "<td>$" + dspPrice + "</td>" +
-            "<td>" + quantitySelect(++rowCount) + "</td>" +
-        "</tr>";
+    console.log("price: " + price);
+    console.log("displayed: " + formatPrice(price));
+
+    // create new table row element to add the item to the table
+    let itemRow = document.createElement("tr");
+    let itemName = document.createElement("td");
+    let itemNameText = document.createTextNode(item);
+    itemName.appendChild(itemNameText);
+    let itemPrice = document.createElement("td");
+    let itemPriceText = document.createTextNode(formatPrice(price));
+    itemPrice.appendChild(itemPriceText);
+    let itemQtySelector = document.createElement("td");
+    itemQtySelector.appendChild(quantitySelect(++rowCount));
+    itemRow.appendChild(itemName);
+    itemRow.appendChild(itemPrice);
+    itemRow.appendChild(itemQtySelector);
 
     // append item to the item list
-    itemList.push({row: rowCount, price: dspPrice, qty: 0});
+    itemList.push({row: rowCount, price: price, qty: 0});
 
     // append row to the table
-    document.getElementById("item-table-body").innerHTML += tblMarkup;
+    document.getElementById("item-table-body").appendChild(itemRow);
 
     // add event listener to the item's quantity selector
     document.getElementById("sel_" + rowCount).addEventListener('change', updateItemQty);
@@ -78,19 +84,30 @@ console.log("Event listener added");
 
 // markup for the quantity select
 const quantitySelect = (row) => {
-    // starting markup for the select
-    let selMarkup = 
-        "<select id='sel_" + row + "' class='form-select' aria-label='Quantity select'>" +
-            "<option selected value='0'>0</option>";
+    // create select elements to be added to the table for each new item
+    let select = document.createElement("select");
+    select.setAttribute("id", "sel_"+row);
+    select.setAttribute("class", "form-select");
+    select.setAttribute("aria-label", "Quantity select");
+    let defaultOpt = document.createElement("option");
+    defaultOpt.setAttribute("value", "0");
+    defaultOpt.setAttribute("selected", "selected");
+    let defaultOptText = document.createTextNode('0');
+    defaultOpt.appendChild(defaultOptText);
+    select.appendChild(defaultOpt);
 
+    let qtyOpt;
+    let qtyOptText;
     // create an option for each quantity number up to 99
     for (let qty = 1; qty < 100; qty++) {
-        selMarkup += "<option value='" + qty + "'>" + qty + "</option>";
+        qtyOpt = document.createElement("option", {value: qty});
+        qtyOptText = document.createTextNode(qty);
+        qtyOpt.appendChild(qtyOptText);
+        select.appendChild(qtyOpt);
     }
-
-    selMarkup += "</select>";
     
-    return selMarkup;
+    // returns the element to be appended to the td of the current item row
+    return select;
 }
 
 // TODO: Option to add tip
