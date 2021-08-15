@@ -4,6 +4,7 @@ let tips = 0;
 let cartTotal = 0;
 let rowCount = 0;
 let itemList = [];
+let cstTipDisabled = true;
 let formatter = new Intl.NumberFormat(undefined, {style: "currency", currency: "USD"});
 
 const updatePriceDisplay = (id, price) => {
@@ -111,13 +112,19 @@ const quantitySelect = (row) => {
     return select;
 }
 
-const updateAppliedTax = (event) => {
+const updateAppliedTip = (event) => {
     let tipPercentage = event.target.value;
+    let customInput = document.getElementById("cstTip");
 
     if (tipPercentage == "custom") {
-
+        // enable the text input for the custom tip
+        customInput.removeAttribute("disabled");
+        tips = parseFloat(customInput.value);
     }
     else {
+        if (customInput.disabled == false) {
+            customInput.setAttribute("disabled", "disabled");
+        }
         tips = subtotal * tipPercentage;
     }
 
@@ -128,9 +135,17 @@ const updateAppliedTax = (event) => {
     updateCartTotal();
 }
 
+const applyCustomTip = (event) => {
+    tips = parseFloat(event.target.value);
+    
+    updatePriceDisplay("tip-applied", tips);
+    updateCartTotal();
+}
+
 // Add listeners to radio button to update the cart total based on the selected amount of tip
 let tipRadios = document.getElementsByName("tip");
 for (let i = 0; i < tipRadios.length; i++) {
-    tipRadios[i].addEventListener("click", updateAppliedTax);
+    tipRadios[i].addEventListener("click", updateAppliedTip);
 }
 
+document.getElementById("cstTip").addEventListener("change", applyCustomTip);
