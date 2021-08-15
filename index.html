@@ -23,8 +23,10 @@
             <!-- list of items -->
             <div class="card md-3">
                 <div class="card-body row" id="item-form">
-                    <!-- form to add new items -->
-                    <label for="item-form" class="form-label">Add New Item</label>
+                    
+                    <h3>Add New Item</h3>
+
+                    <div id="alertPlaceholder"></div>
 
                     <div class="input-group col md-3">
                         <span class="input-group-text">New Item</span>
@@ -33,7 +35,7 @@
 
                     <div class="input-group col md-3">
                         <span class="input-group-text">$</span>
-                        <input type="number" class="form-control" id="itemPrice" />
+                        <input type="number" class="form-control" id="itemPrice" min="0" />
                     </div>
 
                     <button type="button" class="btn btn-primary col" id="addBtn">Add Item</button>
@@ -44,6 +46,7 @@
             <!-- table of items and prices -->
             <div class="card md-3" style="margin-bottom: 50px;">
                 <div class="card-body">
+                    <h3>Shopping Cart</h3>
                     <table class="table table-striped">
                         <thead>
                             <th scope="col">Item</th>
@@ -84,7 +87,7 @@
                     </div>
                     <div class="input-group col md-3">
                         <span class="input-group-text">$</span>
-                        <input type="number" class="form-control" id="cstTip" value="0" disabled />
+                        <input type="number" class="form-control" id="cstTip" value="0" min="0" disabled />
                     </div>
 
                     <hr style="margin: 20px;" />

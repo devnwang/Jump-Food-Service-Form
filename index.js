@@ -46,45 +46,64 @@ const updateItemQty = (event) => {
     updateCartTotal();
 }
 
+const alert = (msg, type) => {
+    let wrapper = document.createElement("div");
+    wrapper.innerHTML = "<div class='alert alert-" + type + " alert-dismissible' role='alert'>"
+        + msg + "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='CLose'></button></div>";
+
+    document.getElementById("alertPlaceholder").append(wrapper);
+}
+
 // add new item to the table
 const addNewItem = (item, price) => {
+    let duplicateItem = false;
+
+    // Force value to be a position number
+    price = Math.abs(price);
 
     // TODO: Don't add any duplicate items to the list
+    for (let i = 0; i < itemList.length; i++) {
+        if (item.toLowerCase() == itemList[i].name.toLowerCase()) {
+            duplicateItem = true;
+            break;
+        }
+    }
 
-    console.log("price: " + price);
-    console.log("displayed: " + price.toLocaleString(undefined, {style: "currency", currency: "USD"}));
+    if (!duplicateItem) {
+        // create new table row element to add the item to the table
+        let itemRow = document.createElement("tr");
+        let itemName = document.createElement("td");
+        let itemNameText = document.createTextNode(item);
+        itemName.appendChild(itemNameText);
+        let itemPrice = document.createElement("td");
+        let itemPriceText = document.createTextNode(formatter.format(price));
+        itemPrice.appendChild(itemPriceText);
+        let itemQtySelector = document.createElement("td");
+        itemQtySelector.appendChild(quantitySelect(++rowCount));
+        itemRow.appendChild(itemName);
+        itemRow.appendChild(itemPrice);
+        itemRow.appendChild(itemQtySelector);
 
-    // create new table row element to add the item to the table
-    let itemRow = document.createElement("tr");
-    let itemName = document.createElement("td");
-    let itemNameText = document.createTextNode(item);
-    itemName.appendChild(itemNameText);
-    let itemPrice = document.createElement("td");
-    let itemPriceText = document.createTextNode(formatter.format(price));
-    itemPrice.appendChild(itemPriceText);
-    let itemQtySelector = document.createElement("td");
-    itemQtySelector.appendChild(quantitySelect(++rowCount));
-    itemRow.appendChild(itemName);
-    itemRow.appendChild(itemPrice);
-    itemRow.appendChild(itemQtySelector);
+        // append item to the item list
+        itemList.push({name: item, row: rowCount, price: price, qty: 0});
 
-    // append item to the item list
-    itemList.push({row: rowCount, price: price, qty: 0});
+        // append row to the table
+        document.getElementById("item-table-body").appendChild(itemRow);
 
-    // append row to the table
-    document.getElementById("item-table-body").appendChild(itemRow);
-
-    // add event listener to the item's quantity selector
-    document.getElementById("sel_" + rowCount).addEventListener('change', updateItemQty);
+        // add event listener to the item's quantity selector
+        document.getElementById("sel_" + rowCount).addEventListener('change', updateItemQty);
+    }
+    else {
+        alert("This item already exists. Try again.", "danger");
+    }
 }
 
 // add event listener to "Add Item" button
 let itemName = document.getElementById("itemName");
 let itemPrice = document.getElementById("itemPrice");
 document.getElementById("addBtn").addEventListener('click', () => addNewItem(itemName.value, itemPrice.value));
-console.log("Event listener added");
 
-// markup for the quantity select
+// creates the select element to be added to the table to change the item quantity
 const quantitySelect = (row) => {
     // create select elements to be added to the table for each new item
     let select = document.createElement("select");
@@ -136,7 +155,7 @@ const updateAppliedTip = (event) => {
 }
 
 const applyCustomTip = (event) => {
-    tips = parseFloat(event.target.value);
+    tips = parseFloat(Math.abs(event.target.value));
     
     updatePriceDisplay("tip-applied", tips);
     updateCartTotal();
