@@ -4,13 +4,15 @@ let tips = 0;
 let cartTotal = 0;
 let rowCount = 0;
 let itemList = [];
-
-const formatPrice = (price) => {
-    return (price).toLocaleString(undefined, { style: "currency", currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
+let formatter = new Intl.NumberFormat(undefined, {style: "currency", currency: "USD"});
 
 const updatePriceDisplay = (id, price) => {
-    document.getElementById(id).innerHTML = formatPrice(price);
+    document.getElementById(id).innerHTML = formatter.format(price);
+}
+
+const updateCartTotal = () => {
+    cartTotal = subtotal + tax + tips;
+    updatePriceDisplay("total", cartTotal);
 }
 
 const updateItemQty = (event) => {
@@ -40,8 +42,7 @@ const updateItemQty = (event) => {
     updatePriceDisplay("tax", tax);
 
     // update cart total
-    cartTotal = subtotal + tax + tips;
-    updatePriceDisplay("total", cartTotal);
+    updateCartTotal();
 }
 
 // add new item to the table
@@ -50,7 +51,7 @@ const addNewItem = (item, price) => {
     // TODO: Don't add any duplicate items to the list
 
     console.log("price: " + price);
-    console.log("displayed: " + formatPrice(price));
+    console.log("displayed: " + price.toLocaleString(undefined, {style: "currency", currency: "USD"}));
 
     // create new table row element to add the item to the table
     let itemRow = document.createElement("tr");
@@ -58,7 +59,7 @@ const addNewItem = (item, price) => {
     let itemNameText = document.createTextNode(item);
     itemName.appendChild(itemNameText);
     let itemPrice = document.createElement("td");
-    let itemPriceText = document.createTextNode(formatPrice(price));
+    let itemPriceText = document.createTextNode(formatter.format(price));
     itemPrice.appendChild(itemPriceText);
     let itemQtySelector = document.createElement("td");
     itemQtySelector.appendChild(quantitySelect(++rowCount));
@@ -110,8 +111,26 @@ const quantitySelect = (row) => {
     return select;
 }
 
-// TODO: Option to add tip
-// Add listeners to radio button to update the cart total based on the selected amount of tip
+const updateAppliedTax = (event) => {
+    let tipPercentage = event.target.value;
 
-// TODO: Calculate the cart total
+    if (tipPercentage == "custom") {
+
+    }
+    else {
+        tips = subtotal * tipPercentage;
+    }
+
+    // update the tips applied display
+    updatePriceDisplay("tip-applied", tips);
+
+    // update the cart total with the tips applied
+    updateCartTotal();
+}
+
+// Add listeners to radio button to update the cart total based on the selected amount of tip
+let tipRadios = document.getElementsByName("tip");
+for (let i = 0; i < tipRadios.length; i++) {
+    tipRadios[i].addEventListener("click", updateAppliedTax);
+}
 
